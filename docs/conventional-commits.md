@@ -1,1 +1,1 @@
-# what is conventional commits
+# conventional commits
