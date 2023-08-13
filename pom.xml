@@ -28,12 +28,21 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <sourceDirectory>src</sourceDirectory>
         <outputDirectory>${project.basedir}/target/classes</outputDirectory>
         <resources>
             <resource>
-                <directory>src</directory>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
         <plugins>
@@ -50,7 +59,8 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.playground.App</mainClass>
+                    <mainClass>com.playground.Application</mainClass>
+                    <addResourcesToClasspath>true</addResourcesToClasspath>
                 </configuration>
             </plugin>
         </plugins>
