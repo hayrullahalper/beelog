@@ -8,6 +8,20 @@
     <artifactId>playground.java</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <name>playground.java</name>
+    <url>https://github.com/hayrullahalper/playground.java</url>
+    <description>This repository is created to store and share what we learned while learning java.</description>
+    <developers>
+        <developer>
+            <name>Hayrullah Alper</name>
+            <url>https://github.com/hayrullahalper</url>
+        </developer>
+        <developer>
+            <name>Halis Yücel</name>
+            <url>https://github.com/halisyucel</url>
+        </developer>
+    </developers>
+
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
