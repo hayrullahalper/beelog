@@ -1,2 +1,4 @@
 .idea
-out
+target
+.DS_Store
+.vscode

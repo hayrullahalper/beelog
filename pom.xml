@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.playground</groupId>
+    <artifactId>playground.java</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>playground.java</name>
+    <url>https://github.com/hayrullahalper/playground.java</url>
+    <description>This repository is created to store and share what we learned while learning java.</description>
+    <developers>
+        <developer>
+            <name>Hayrullah Alper</name>
+            <url>https://github.com/hayrullahalper</url>
+        </developer>
+        <developer>
+            <name>Halis Yücel</name>
+            <url>https://github.com/halisyucel</url>
+        </developer>
+    </developers>
+
+    <properties>
+        <maven.compiler.source>19</maven.compiler.source>
+        <maven.compiler.target>19</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <outputDirectory>${project.basedir}/target/classes</outputDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <source>19</source>
+                    <target>19</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.playground.Application</mainClass>
+                    <addResourcesToClasspath>true</addResourcesToClasspath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
