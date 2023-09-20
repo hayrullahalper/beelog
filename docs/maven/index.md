@@ -1,8 +1,11 @@
 # What is Maven?
 
-Maven is a build automation tool used primarily for Java projects. Maven can also be used to build and manage projects written in C#, Ruby, Scala, and other languages. The Maven project is hosted by the Apache Software Foundation, where it was formerly part of the Jakarta Project.
+Maven is a build automation tool used primarily for Java projects. Maven can also be used to build and manage projects
+written in C#, Ruby, Scala, and other languages. The Maven project is hosted by the Apache Software Foundation, where it
+was formerly part of the Jakarta Project.
 
-Maven addresses two aspects of building software: first, it describes how software is built, and second, it describes its dependencies.
+Maven addresses two aspects of building software: first, it describes how software is built, and second, it describes
+its dependencies.
 
 Also, **it can be used as a version control system**.
 
@@ -57,21 +60,24 @@ The default Maven lifecycle consists of the following phases:
 
 1. **validate**: validate the project is correct and all necessary information is available
 2. **compile**: compile the source code of the project
-3. **test**: test the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed
+3. **test**: test the compiled source code using a suitable unit testing framework. These tests should not require the
+   code be packaged or deployed
 4. **package**: take the compiled code and package it in its distributable format, such as a JAR.
-5. **integration-test**: process and deploy the package if necessary into an environment where integration tests can be run
+5. **integration-test**: process and deploy the package if necessary into an environment where integration tests can be
+   run
 6. **verify**: run any checks to verify the package is valid and meets quality criteria
 7. **install**: install the package into the local repository, for use as a dependency in other projects locally
-8. **deploy**: done in the build environment, copies the final package to the remote repository for sharing with other developers and projects.
+8. **deploy**: done in the build environment, copies the final package to the remote repository for sharing with other
+   developers and projects.
 
 |                                      ![Maven Lifecycle](./maven-lifecycle.png)                                       |
-| :------------------------------------------------------------------------------------------------------------------: |
+|:--------------------------------------------------------------------------------------------------------------------:|
 | _[8 Phases of the Default Maven Lifecycle](https://www.geeksforgeeks.org/maven-lifecycle-and-basic-maven-commands/)_ |
 
 ### Basic Maven Commands
 
 |         Command          |                                             Description                                             |
-| :----------------------: | :-------------------------------------------------------------------------------------------------: |
+|:------------------------:|:---------------------------------------------------------------------------------------------------:|
 |      `mvn compile`       |                              Compiles the source code of the project.                               |
 |        `mvn test`        |      Runs the tests against the compiled source code using a suitable unit testing framework.       |
 |      `mvn package`       |         Takes the compiled code and packages it in its distributable format, such as a JAR.         |
@@ -83,21 +89,27 @@ The default Maven lifecycle consists of the following phases:
 |  `mvn dependency:tree`   |                           Displays the dependency tree for this project.                            |
 | `mvn archetype:generate` | Generates a new project from an archetype, or an artifact from a given group, artifact and version. |
 
-Note: You can run the `main` method with the `mvn exec:java` command with the [`exec-maven-plugin`](https://www.mojohaus.org/exec-maven-plugin/) I added to the project.
+Note: You can run the `main` method with the `mvn exec:java` command with
+the [`exec-maven-plugin`](https://www.mojohaus.org/exec-maven-plugin/) I added to the project.
 
-Generally when we run any of the above commands, we add the `mvn clean` step so that the target folder generated from the previous build is removed before running a newer build. This is how the command would look on integrating the clean step with install phase:
+Generally when we run any of the above commands, we add the `mvn clean` step so that the target folder generated from
+the previous build is removed before running a newer build. This is how the command would look on integrating the clean
+step with install phase:
 
 ```bash
 $ mvn clean install
 ```
 
-Similarly, if we want to run the step in debug mode for more detailed build information and logs, we will add `-X` to the actual command. Hence, the install step with debug mode on will have the following command:
+Similarly, if we want to run the step in debug mode for more detailed build information and logs, we will add `-X` to
+the actual command. Hence, the install step with debug mode on will have the following command:
 
 ```bash
 $ mvn -X install
 ```
 
-Consider a scenario where we do not want to run the tests while packaging or installing the Java project. In this case, we use `-DskipTests` along with the actual command. If we need to run the install step by skipping the tests associated with the project, the command would be:
+Consider a scenario where we do not want to run the tests while packaging or installing the Java project. In this case,
+we use `-DskipTests` along with the actual command. If we need to run the install step by skipping the tests associated
+with the project, the command would be:
 
 ```bash
 $ mvn install -DskipTests
@@ -105,7 +117,11 @@ $ mvn install -DskipTests
 
 ## What is `pom.xml`?
 
-A Project Object Model or POM is the fundamental unit of work in Maven. It is an `XML` file that contains information about the project and configuration details used by Maven to build the project. It contains default values for most projects. Examples for this is the build directory, which is target; the source directory, which is `src/main/java`; the test source directory, which is `src/test/java`; and so on. When executing a task or goal, Maven looks for the POM in the current directory. It reads the POM, gets the needed configuration information, then executes the goal.
+A Project Object Model or POM is the fundamental unit of work in Maven. It is an `XML` file that contains information
+about the project and configuration details used by Maven to build the project. It contains default values for most
+projects. Examples for this is the build directory, which is target; the source directory, which is `src/main/java`; the
+test source directory, which is `src/test/java`; and so on. When executing a task or goal, Maven looks for the POM in
+the current directory. It reads the POM, gets the needed configuration information, then executes the goal.
 
 ## Project Object Model (POM) explained
 
@@ -128,15 +144,31 @@ Here is an example of a minimal POM for a project that produces a library called
 </project>
 ```
 
-A POM requires that its `groupId`, `artifactId`, and `version` be configured. These three values form the project's fully qualified artifact name. For example, the above POM references a project with a fully qualified artifact name of `com.mycompany.app:my-app:1.0-SNAPSHOT`.
+A POM requires that its `groupId`, `artifactId`, and `version` be configured. These three values form the project's
+fully qualified artifact name. For example, the above POM references a project with a fully qualified artifact name
+of `com.mycompany.app:my-app:1.0-SNAPSHOT`.
 
 ### POM Best Practices
 
-- The `groupId` is meant to identify the project's group uniquely across all projects. For example, all core Maven artifacts use `org.apache.maven` as their `groupId`. It is recommended to use a qualified name (for example, `org.mycompany.myproject`) to start your groupId to prevent it from conflicting with future additions to the central repository.
-- The `artifactId` is meant to identify the artifact uniquely among your projects. For example, if you were creating a library project, this `artifactId` would be used as the name of the directory containing the project sources, the name of the project's default JAR file (e.g., `my-app-1.0.jar`, where the default final name is `${artifactId}-${version}.jar`), and the default prefix for the names of the artifacts generated by the project in its target directory.
-- The `version` is meant to indicate the version of the artifact generated by the project. Maven goes a long way to help you with version management of your project: it encourages the use of version control systems for your source code, and has a number of options and features to help you manage, label, and release your project's artifacts.
-- The `packaging` is meant to identify the packaging used by the project (e.g., JAR, WAR, EAR, etc.). While `optional`, it usually makes sense to specify `packaging` for your project, otherwise, the default `jar` value is used, so you would only need to specify `packaging` if you are creating something other than a JAR file. (We will generally use `war` for web applications.)
-- The `name` is meant to be a human-readable moniker for the project. While `optional`, it is a good practice to supply this value, as it is the default way for humans to refer to your project. For example, Maven's default `install` directory is named `apache-maven`, which is the artifactId of the project.
+- The `groupId` is meant to identify the project's group uniquely across all projects. For example, all core Maven
+  artifacts use `org.apache.maven` as their `groupId`. It is recommended to use a qualified name (for
+  example, `org.mycompany.myproject`) to start your groupId to prevent it from conflicting with future additions to the
+  central repository.
+- The `artifactId` is meant to identify the artifact uniquely among your projects. For example, if you were creating a
+  library project, this `artifactId` would be used as the name of the directory containing the project sources, the name
+  of the project's default JAR file (e.g., `my-app-1.0.jar`, where the default final name
+  is `${artifactId}-${version}.jar`), and the default prefix for the names of the artifacts generated by the project in
+  its target directory.
+- The `version` is meant to indicate the version of the artifact generated by the project. Maven goes a long way to help
+  you with version management of your project: it encourages the use of version control systems for your source code,
+  and has a number of options and features to help you manage, label, and release your project's artifacts.
+- The `packaging` is meant to identify the packaging used by the project (e.g., JAR, WAR, EAR, etc.). While `optional`,
+  it usually makes sense to specify `packaging` for your project, otherwise, the default `jar` value is used, so you
+  would only need to specify `packaging` if you are creating something other than a JAR file. (We will generally
+  use `war` for web applications.)
+- The `name` is meant to be a human-readable moniker for the project. While `optional`, it is a good practice to supply
+  this value, as it is the default way for humans to refer to your project. For example, Maven's default `install`
+  directory is named `apache-maven`, which is the artifactId of the project.
 - The `description` is meant to provide a human-readable description of the project. `optional`
 - The `url` is meant to specify the project's home page. `optional`
 - The `inceptionYear` is meant to specify the year when the project was started. `optional`
@@ -148,7 +180,9 @@ A POM requires that its `groupId`, `artifactId`, and `version` be configured. Th
 
 ### Project Interpolation and Variable Reference
 
-Maven supports the use of tokens to dynamically alter the POM at build time. These tokens, denoted by the `${...}` delimiters, can come from the system properties, your project properties, from your filter resources, and from the command line. For example, you can set the `groupId`, `artifactId`, and `version` of your project via the command line:
+Maven supports the use of tokens to dynamically alter the POM at build time. These tokens, denoted by the `${...}`
+delimiters, can come from the system properties, your project properties, from your filter resources, and from the
+command line. For example, you can set the `groupId`, `artifactId`, and `version` of your project via the command line:
 
 ```bash
 $ mvn -DgroupId=com.mycompany.app -DartifactId=my-app -Dversion=1.0-SNAPSHOT ...
@@ -169,11 +203,14 @@ For example, in our current pom.xml file, `${project.basedir}` is used as an exa
 
 ## What is a dependency?
 
-A dependency is a JAR file required for development. Maven downloads all the dependencies defined in the POM file from the Maven repository and copies them to the local system. The dependencies are defined in the `pom.xml` file using the `<dependencies>` tag.
+A dependency is a JAR file required for development. Maven downloads all the dependencies defined in the POM file from
+the Maven repository and copies them to the local system. The dependencies are defined in the `pom.xml` file using
+the `<dependencies>` tag.
 
 ### How to add a dependency?
 
-To add a dependency, you need to add the `<dependencies>` tag in the `pom.xml` file. The `<dependencies>` tag contains a list of `<dependency>` tags, each of which describes a dependency.
+To add a dependency, you need to add the `<dependencies>` tag in the `pom.xml` file. The `<dependencies>` tag contains a
+list of `<dependency>` tags, each of which describes a dependency.
 
 ```xml
 <dependencies>
@@ -187,13 +224,18 @@ To add a dependency, you need to add the `<dependencies>` tag in the `pom.xml` f
 
 ## What is a plugin?
 
-A plugin is a collection of one or more goals. A goal is a specific task used in Maven. For example, the `compile` goal is used to compile the Java source files, the `test` goal is used to run the unit tests of the project, and the `install` goal is used to install the project's artifacts into the local repository.
+A plugin is a collection of one or more goals. A goal is a specific task used in Maven. For example, the `compile` goal
+is used to compile the Java source files, the `test` goal is used to run the unit tests of the project, and
+the `install` goal is used to install the project's artifacts into the local repository.
 
-For example, the `maven-exec-plugin` is used to execute the main class of a Java application in the project. The `maven-compiler-plugin` is used to compile the Java source code of the project. The `maven-surefire-plugin` is used to run the unit tests of the project.
+For example, the `maven-exec-plugin` is used to execute the main class of a Java application in the project.
+The `maven-compiler-plugin` is used to compile the Java source code of the project. The `maven-surefire-plugin` is used
+to run the unit tests of the project.
 
 ### How to add a plugin?
 
-To add a plugin, you need to add the `<plugins>` tag in the `pom.xml` file. The `<plugins>` tag contains a list of `<plugin>` tags, each of which describes a plugin.
+To add a plugin, you need to add the `<plugins>` tag in the `pom.xml` file. The `<plugins>` tag contains a list
+of `<plugin>` tags, each of which describes a plugin.
 
 ```xml
 <plugins>

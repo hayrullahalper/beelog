@@ -2,17 +2,20 @@
 
 **What is a Java Bean?**
 
-A JavaBean is just a [standard](https://www.oracle.com/java/technologies/javase/javabeans-spec.html). It is a regular Java `class`, except it follows certain conventions:
+A JavaBean is just a [standard](https://www.oracle.com/java/technologies/javase/javabeans-spec.html). It is a regular
+Java `class`, except it follows certain conventions:
 
 - All properties in the class must be private (use **getters** and **setters** to access them)
 - A public no-argument constructor
 - Implements `Serializable` interface
 
-Actually, `JavaBean` is a convention rather than a strict rule. It is a standard that we can follow to make our code more readable and maintainable.
+Actually, `JavaBean` is a convention rather than a strict rule. It is a standard that we can follow to make our code
+more readable and maintainable.
 
 **Why use Java Beans?**
 
-Java Beans are used to encapsulate many objects into a single object (the bean), so that they can be passed around as a single bean object instead of as multiple individual objects.
+Java Beans are used to encapsulate many objects into a single object (the bean), so that they can be passed around as a
+single bean object instead of as multiple individual objects.
 
 **Example**
 
@@ -59,15 +62,18 @@ public class Person implements Serializable {
 
 ## What is Serializable interface?
 
-The `Serializable` interface is a marker interface. It is used to indicate that a class can be serialized. It does not contain any methods or fields.
+The `Serializable` interface is a marker interface. It is used to indicate that a class can be serialized. It does not
+contain any methods or fields.
 
 **What is serialization?**
 
-Serialization is the process of converting an object into a stream of bytes. Deserialization is the reverse process of converting a stream of bytes into an object.
+Serialization is the process of converting an object into a stream of bytes. Deserialization is the reverse process of
+converting a stream of bytes into an object.
 
 **Why do we need serialization?**
 
-Serialization is used to save the state of an object so that it can be recreated later. For example, we can use serialization to save the state of a game character so that we can load it later.
+Serialization is used to save the state of an object so that it can be recreated later. For example, we can use
+serialization to save the state of a game character so that we can load it later.
 
 _**TODO:** actually I don't know what is serialization. we will learn it later._
 
@@ -75,7 +81,8 @@ _**TODO:** actually I don't know what is serialization. we will learn it later._
 
 **What is Java Bean Validation?**
 
-Java Bean Validation is a specification that allows us to validate Java Beans. It is a set of annotations that we can use to validate the properties of a Java Bean.
+Java Bean Validation is a specification that allows us to validate Java Beans. It is a set of annotations that we can
+use to validate the properties of a Java Bean.
 
 **Example**
 
@@ -108,7 +115,8 @@ public class Person implements Serializable {
 
 **How to validate a Java Bean?**
 
-We can use the `Validator` class to validate a Java Bean. The `Validator` class is part of the `javax.validation` package.
+We can use the `Validator` class to validate a Java Bean. The `Validator` class is part of the `javax.validation`
+package.
 
 ```java
 public class Main {
