@@ -8,17 +8,14 @@ public class Application {
   public static void main(String[] args) {
     SessionFactory factory = new Configuration()
         .configure("hibernate.cfg.xml")
-        .addAnnotatedClass(User.class)
+        .addAnnotatedClass(UserEntity.class)
         .buildSessionFactory();
 
     try(factory) {
       Session session = factory.getCurrentSession();
-      session.beginTransaction();
 
-      User user = new User("username1", "email1@example.com", "name");
+      UserRepository userRepository = new UserRepository(session);
 
-      session.persist(user);
-      session.getTransaction().commit();
     }
   }
 }
