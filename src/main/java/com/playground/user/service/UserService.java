@@ -21,8 +21,7 @@ public class UserService extends Service {
         userRepository.save(user);
     }
 
-    public String getUserPasswordHashByUsername(String username) {
-        UserEntity user = userRepository.findByUsername(username);
-        return user.getPasswordHash();
+    public UserEntity findByUsername(String username) {
+        return userRepository.findOne((cb, root) -> cb.equal(root.get("username"), username));
     }
 }

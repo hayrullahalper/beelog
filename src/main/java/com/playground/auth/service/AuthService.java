@@ -3,6 +3,7 @@ package com.playground.auth.service;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.beehive.lib.Service.Service;
 import com.beehive.annotations.Injectable;
+import com.playground.user.entity.UserEntity;
 import com.playground.user.service.UserService;
 
 @Injectable
@@ -15,8 +16,8 @@ public class AuthService extends Service {
     }
 
     public boolean login(String username, String password) {
-        String hash = userService.getUserPasswordHashByUsername(username);
-        return verifyPassword(password, hash);
+        UserEntity user = userService.findByUsername(username);
+        return verifyPassword(password, user.getPasswordHash());
     }
 
     private String hashPassword(String password) {

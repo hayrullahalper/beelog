@@ -3,6 +3,12 @@ package com.playground.user.repository;
 import com.beehive.lib.Repository.Repository;
 import com.playground.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
+import java.util.List;
 
 public class UserRepository extends Repository<UserEntity> {
     public void save(UserEntity user) {
@@ -36,13 +42,39 @@ public class UserRepository extends Repository<UserEntity> {
 
     }
 
-    public UserEntity findByUsername(String username) {
+    public UserEntity findOne(EntityFilter filter) {
         EntityManager em = em();
 
         try (em) {
-            return em.createQuery("SELECT u FROM UserEntity u WHERE u.username = :username", UserEntity.class)
-                .setParameter("username", username)
-                .getSingleResult();
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<UserEntity> cq = cb.createQuery(UserEntity.class);
+            Root<UserEntity> root = cq.from(UserEntity.class);
+
+            Predicate predicate = filter.filter(cb, root);
+            cq.where(predicate);
+
+            cq.select(root);
+
+            return em.createQuery(cq).getSingleResult();
+        }
+    }
+
+    public List<UserEntity> findAll(EntityFilter filter) {
+        EntityManager em = em();
+
+        try (em) {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<UserEntity> cq = cb.createQuery(UserEntity.class);
+            Root<UserEntity> root = cq.from(UserEntity.class);
+
+            Predicate predicate = filter.filter(cb, root);
+            cq.where(predicate);
+
+            cq.select(root);
+
+            return em.createQuery(cq).getResultList();
         }
     }
 }
