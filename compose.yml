@@ -1,5 +1,7 @@
 version: '3.3'
 
+name: playground
+
 services:
   db:
     image: mysql:5.7
