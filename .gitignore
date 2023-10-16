@@ -1,7 +1,6 @@
 .idea
-target
 .DS_Store
 .vscode
+*.iml
 
-.env
-.env.local
+target
