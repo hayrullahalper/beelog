@@ -1,8 +1,8 @@
-package com.playground.app.module;
+package com.beelog.app.module;
 
 import com.beehive.annotations.Module;
-import com.playground.auth.module.AuthModule;
-import com.playground.user.module.UserModule;
+import com.beelog.auth.module.AuthModule;
+import com.beelog.user.module.UserModule;
 
 @Module(
   modules = {

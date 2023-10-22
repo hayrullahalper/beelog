@@ -1,9 +1,9 @@
-package com.playground.user.service;
+package com.beelog.user.service;
 
 import com.beehive.annotations.Injectable;
 import com.beehive.lib.Service.Service;
-import com.playground.user.entity.UserEntity;
-import com.playground.user.repository.UserRepository;
+import com.beelog.user.entity.UserEntity;
+import com.beelog.user.repository.UserRepository;
 
 @Injectable
 public class UserService extends Service {

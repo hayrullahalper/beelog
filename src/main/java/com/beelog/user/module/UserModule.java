@@ -1,7 +1,7 @@
-package com.playground.user.module;
+package com.beelog.user.module;
 
 import com.beehive.annotations.Module;
-import com.playground.user.service.UserService;
+import com.beelog.user.service.UserService;
 
 @Module(
   services = {

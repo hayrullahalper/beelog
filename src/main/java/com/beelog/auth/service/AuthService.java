@@ -1,10 +1,10 @@
-package com.playground.auth.service;
+package com.beelog.auth.service;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.beehive.annotations.Injectable;
 import com.beehive.lib.Service.Service;
-import com.playground.user.entity.UserEntity;
-import com.playground.user.service.UserService;
+import com.beelog.user.entity.UserEntity;
+import com.beelog.user.service.UserService;
 
 @Injectable
 public class AuthService extends Service {

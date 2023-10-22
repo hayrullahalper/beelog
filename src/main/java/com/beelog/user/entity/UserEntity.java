@@ -1,4 +1,4 @@
-package com.playground.user.entity;
+package com.beelog.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

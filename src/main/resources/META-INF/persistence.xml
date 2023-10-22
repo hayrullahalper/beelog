@@ -1,5 +1,5 @@
 <persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence">
-    <persistence-unit name="playground">
+    <persistence-unit name="beelog">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

@@ -1,9 +1,9 @@
-package com.playground.auth.controller;
+package com.beelog.auth.controller;
 
 import com.beehive.lib.Controller.Controller;
+import com.beelog.auth.service.AuthService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.playground.auth.service.AuthService;
 
 import javax.validation.ConstraintViolation;
 import javax.ws.rs.Consumes;

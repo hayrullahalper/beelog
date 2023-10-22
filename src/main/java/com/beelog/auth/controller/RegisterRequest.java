@@ -1,4 +1,4 @@
-package com.playground.auth.controller;
+package com.beelog.auth.controller;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;

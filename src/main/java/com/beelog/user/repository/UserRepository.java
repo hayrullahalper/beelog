@@ -1,7 +1,7 @@
-package com.playground.user.repository;
+package com.beelog.user.repository;
 
 import com.beehive.lib.Repository.Repository;
-import com.playground.user.entity.UserEntity;
+import com.beelog.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
