@@ -14,11 +14,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Set up JDK 19
+    - name: Set up JDK 17
       uses: oracle-actions/setup-java@v1
       with:
         website: oracle.com
-        release: 19
+        release: 17
 
     - name: Build with Maven
       run: mvn clean install
