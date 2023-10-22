@@ -5,6 +5,8 @@ import com.beehive.lib.Module.Module;
 import com.beehive.lib.Service.Service;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public final class Application {
+  private static final Logger logger = LogManager.getLogger();
   private final com.beehive.lib.Module.Module mainModule;
   private final List<Service> services = new ArrayList<>();
   private final ApplicationConfig config;
@@ -28,6 +31,7 @@ public final class Application {
   public Application(Class<?> clazz, ApplicationConfig config) {
     this.config = config;
     this.mainModule = Module.create(clazz, null);
+
     this.emf = Persistence.createEntityManagerFactory(config.getPersistenceUnit());
 
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -37,10 +41,10 @@ public final class Application {
   private HttpServer createServer(int port) {
     final ResourceConfig rc = new ResourceConfig().packages(config.getMainPackage());
 
-    if (config.getMode() != ApplicationConfig.MODE.DEBUG) {
-      java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
-      java.util.logging.Logger.getLogger("org.glassfish.grizzly").setLevel(Level.OFF);
-    }
+    rc.property("jersey.config.server.wadl.disableWadl", true);
+
+    java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+    java.util.logging.Logger.getLogger("org.glassfish.grizzly").setLevel(Level.OFF);
 
     return GrizzlyHttpServerFactory.createHttpServer(config.getBaseURI(port), rc);
   }
@@ -50,9 +54,9 @@ public final class Application {
 
     final HttpServer server = createServer(port);
 
-    System.out.printf(">>%n>>  BEEHIVE app started with endpoints available at %s \uD83D\uDE80 \uD83D\uDE80 \uD83D\uDE80%n",
-                      config.getBaseURI(port));
-    System.out.printf(">>%n>>  Hit Ctrl-C to stop it...%n>>");
+    logger.info("BEEHIVE app started with endpoints available at {}",
+                config.getBaseURI(port));
+    logger.info("Press CTRL^C to exit...");
 
     try {
       System.in.read();
@@ -88,6 +92,7 @@ public final class Application {
           .newInstance();
 
         services.add(Service.class.isAssignableFrom(serviceClass) ? (Service) service : null);
+        logger.info("Service {} loaded", serviceClass.getSimpleName());
       } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                NoSuchMethodException e) {
         throw new ApplicatonServiceLoadError(serviceClass.getName());
