@@ -1,27 +1,26 @@
 package com.playground.user.service;
 
-import com.beehive.lib.Service.Service;
 import com.beehive.annotations.Injectable;
+import com.beehive.lib.Service.Service;
 import com.playground.user.entity.UserEntity;
-
 import com.playground.user.repository.UserRepository;
 
 @Injectable
 public class UserService extends Service {
-    private final UserRepository userRepository = repository(UserRepository.class);
+  private final UserRepository userRepository = repository(UserRepository.class);
 
-    public void create(String name, String username, String email, String passwordHash) {
-        UserEntity user = new UserEntity();
+  public void create(String name, String username, String email, String passwordHash) {
+    UserEntity user = new UserEntity();
 
-        user.setName(name);
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPasswordHash(passwordHash);
+    user.setName(name);
+    user.setUsername(username);
+    user.setEmail(email);
+    user.setPasswordHash(passwordHash);
 
-        userRepository.save(user);
-    }
+    userRepository.save(user);
+  }
 
-    public UserEntity findByUsername(String username) {
-        return userRepository.findOne((cb, root) -> cb.equal(root.get("username"), username));
-    }
+  public UserEntity findByUsername(String username) {
+    return userRepository.findOne((cb, root) -> cb.equal(root.get("username"), username));
+  }
 }

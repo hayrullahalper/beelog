@@ -5,9 +5,10 @@ import com.playground.auth.module.AuthModule;
 import com.playground.user.module.UserModule;
 
 @Module(
-    modules = {
-        UserModule.class,
-        AuthModule.class
-    }
+  modules = {
+    UserModule.class,
+    AuthModule.class
+  }
 )
-public class AppModule {}
+public class AppModule {
+}

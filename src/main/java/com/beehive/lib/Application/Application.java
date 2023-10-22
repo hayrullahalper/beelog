@@ -5,118 +5,119 @@ import com.beehive.lib.Module.Module;
 import com.beehive.lib.Service.Service;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.List;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public final class Application {
-    private final com.beehive.lib.Module.Module mainModule;
-    private final List<Service> services = new ArrayList<>();
-    private final ApplicationConfig config;
-    private final EntityManagerFactory emf;
-    private final Validator validator;
+  private final com.beehive.lib.Module.Module mainModule;
+  private final List<Service> services = new ArrayList<>();
+  private final ApplicationConfig config;
+  private final EntityManagerFactory emf;
+  private final Validator validator;
 
-    public Application(Class<?> clazz, ApplicationConfig config) {
-        this.config = config;
-        this.mainModule = Module.create(clazz, null);
-        this.emf = Persistence.createEntityManagerFactory(config.getPersistenceUnit());
+  public Application(Class<?> clazz, ApplicationConfig config) {
+    this.config = config;
+    this.mainModule = Module.create(clazz, null);
+    this.emf = Persistence.createEntityManagerFactory(config.getPersistenceUnit());
 
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        this.validator = factory.getValidator();
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    this.validator = factory.getValidator();
+  }
+
+  private HttpServer createServer(int port) {
+    final ResourceConfig rc = new ResourceConfig().packages(config.getMainPackage());
+
+    if (config.getMode() != ApplicationConfig.MODE.DEBUG) {
+      java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+      java.util.logging.Logger.getLogger("org.glassfish.grizzly").setLevel(Level.OFF);
     }
 
-    private HttpServer createServer(int port) {
-        final ResourceConfig rc = new ResourceConfig().packages(config.getMainPackage());
+    return GrizzlyHttpServerFactory.createHttpServer(config.getBaseURI(port), rc);
+  }
 
-        if (config.getMode() != ApplicationConfig.MODE.DEBUG) {
-            java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
-            java.util.logging.Logger.getLogger("org.glassfish.grizzly").setLevel(Level.OFF);
-        }
+  public void listen(int port) {
+    loadServices();
 
-        return GrizzlyHttpServerFactory.createHttpServer(config.getBaseURI(port), rc);
+    final HttpServer server = createServer(port);
+
+    System.out.printf(">>%n>>  BEEHIVE app started with endpoints available at %s \uD83D\uDE80 \uD83D\uDE80 \uD83D\uDE80%n",
+                      config.getBaseURI(port));
+    System.out.printf(">>%n>>  Hit Ctrl-C to stop it...%n>>");
+
+    try {
+      System.in.read();
+    } catch (IOException e) {
+      System.out.println(e.getMessage());
     }
 
-    public void listen(int port) {
-        loadServices();
+    server.shutdown();
+  }
 
-        final HttpServer server = createServer(port);
+  public EntityManagerFactory getEntityManagerFactory() {
+    return emf;
+  }
 
-        System.out.printf(">>%n>>  BEEHIVE app started with endpoints available at %s \uD83D\uDE80 \uD83D\uDE80 \uD83D\uDE80%n", config.getBaseURI(port));
-        System.out.printf(">>%n>>  Hit Ctrl-C to stop it...%n>>");
+  private List<Class<?>> sortServiceClasses(List<Class<?>> serviceClasses) {
+    return serviceClasses.stream()
+      .sorted((a, b) -> {
+        int aWeight = Service.getWeight(a);
+        int bWeight = Service.getWeight(b);
 
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+        return aWeight - bWeight;
+      })
+      .toList();
+  }
 
-        server.shutdown();
+  private void loadServices() {
+    List<Class<?>> serviceClasses = sortServiceClasses(mainModule.getAllServiceClasses());
+
+    for (Class<?> serviceClass : serviceClasses) {
+      try {
+        Object service = serviceClass
+          .getDeclaredConstructor(new Class<?>[] {})
+          .newInstance();
+
+        services.add(Service.class.isAssignableFrom(serviceClass) ? (Service) service : null);
+      } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+               NoSuchMethodException e) {
+        throw new ApplicatonServiceLoadError(serviceClass.getName());
+      }
+    }
+  }
+
+  private <T extends Service> boolean canInjectorAccessToService(Class<?> requester, Class<T> service) {
+    if (!Injector.class.isAssignableFrom(requester)) {
+      throw new ServiceRequesterInheritError();
     }
 
-    public EntityManagerFactory getEntityManagerFactory() {
-        return emf;
+    return true;
+  }
+
+  public <T extends Service> T getService(Class<?> requester, Class<T> service) {
+    if (!canInjectorAccessToService(requester, service)) {
+      throw new ServiceAccessError(service.getName(), requester.getName());
     }
 
-    private List<Class<?>> sortServiceClasses(List<Class<?>> serviceClasses) {
-        return serviceClasses.stream()
-            .sorted((a, b) -> {
-                int aWeight = Service.getWeight(a);
-                int bWeight = Service.getWeight(b);
-
-                return aWeight - bWeight;
-            })
-            .toList();
+    for (Service s : services) {
+      if (s.getClass().equals(service)) {
+        return service.cast(s);
+      }
     }
 
-    private void loadServices() {
-        List<Class<?>> serviceClasses = sortServiceClasses(mainModule.getAllServiceClasses());
+    throw new ServiceNotFoundError(service.getName());
+  }
 
-        for (Class<?> serviceClass : serviceClasses) {
-            try {
-                Object service = serviceClass
-                    .getDeclaredConstructor(new Class<?>[]{})
-                    .newInstance();
-
-                services.add(Service.class.isAssignableFrom(serviceClass) ? (Service) service : null);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new ApplicatonServiceLoadError(serviceClass.getName());
-            }
-        }
-    }
-
-    private <T extends Service> boolean canInjectorAccessToService(Class<?> requester, Class<T> service) {
-        if (!Injector.class.isAssignableFrom(requester)) {
-            throw new ServiceRequesterInheritError();
-        }
-
-        return true;
-    }
-
-    public <T extends Service> T getService(Class<?> requester, Class<T> service) {
-        if (!canInjectorAccessToService(requester, service)) {
-            throw new ServiceAccessError(service.getName(), requester.getName());
-        }
-
-        for (Service s : services) {
-            if (s.getClass().equals(service)) {
-                return service.cast(s);
-            }
-        }
-
-        throw new ServiceNotFoundError(service.getName());
-    }
-
-    public Validator getValidator() {
-        return validator;
-    }
+  public Validator getValidator() {
+    return validator;
+  }
 }

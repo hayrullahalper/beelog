@@ -4,8 +4,9 @@ import com.beehive.annotations.Module;
 import com.playground.user.service.UserService;
 
 @Module(
-    services = {
-        UserService.class
-    }
+  services = {
+    UserService.class
+  }
 )
-public class UserModule {}
+public class UserModule {
+}
