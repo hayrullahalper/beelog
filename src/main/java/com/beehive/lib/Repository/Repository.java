@@ -6,10 +6,14 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public abstract class Repository<T> {
+
+  protected static final Logger logger = LogManager.getLogger();
 
   public final EntityManager em() {
     return Factory.getInstance()
