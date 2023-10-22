@@ -8,7 +8,7 @@ import com.beelog.app.module.AppModule;
 public class Main {
 
   public static void main(String[] args) {
-    ApplicationConfig config = new ApplicationConfig("com.beelog", "playground");
+    ApplicationConfig config = new ApplicationConfig("com.beelog", "beelog");
 
     Application app = Factory.create(AppModule.class, config);
 
