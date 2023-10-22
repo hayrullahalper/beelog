@@ -70,10 +70,18 @@ public final class Module {
     List<Class<?>> allServices = new ArrayList<>();
 
     for (Module module : modules) {
-      allServices.addAll(module.getAllServiceClasses());
+      for (Class<?> service : module.getAllServiceClasses()) {
+        if (!allServices.contains(service)) {
+          allServices.add(service);
+        }
+      }
     }
 
-    allServices.addAll(services);
+    for (Class<?> service : services) {
+      if (!allServices.contains(service)) {
+        allServices.add(service);
+      }
+    }
 
     return allServices;
   }
