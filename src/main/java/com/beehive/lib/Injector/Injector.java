@@ -8,11 +8,11 @@ import java.util.Set;
 
 public abstract class Injector {
 
-    public final <T extends Service> T service(Class<T> service) {
-        return Factory.getInstance().getService(this.getClass(), service);
-    }
+  public final <T extends Service> T service(Class<T> service) {
+    return Factory.getInstance().getService(this.getClass(), service);
+  }
 
-    public <T> Set<ConstraintViolation<T>> validate(T object) {
-        return Factory.getInstance().getValidator().validate(object);
-    }
+  public <T> Set<ConstraintViolation<T>> validate(T object) {
+    return Factory.getInstance().getValidator().validate(object);
+  }
 }

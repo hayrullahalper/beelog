@@ -4,55 +4,54 @@ import java.net.URI;
 
 public final class ApplicationConfig {
 
-    public enum MODE {
-        DEVELOPMENT,
-        PRODUCTION,
-        DEBUG
-    }
+  private String HOST = "localhost";
+  private String PROTOCOL = "http";
+  private MODE mode = MODE.DEVELOPMENT;
+  private String mainPackage;
+  private String persistenceUnit;
+  public ApplicationConfig(String mainPackage, String persistenceUnit) {
+    this.mainPackage = "com.beelog";
+  }
 
-    private String HOST = "localhost";
-    private String PROTOCOL = "http";
-    private MODE mode = MODE.DEVELOPMENT;
-    private String mainPackage;
-    private String persistenceUnit;
+  public String getHOST() {
+    return HOST;
+  }
 
-    public ApplicationConfig(String mainPackage, String persistenceUnit) {
-        this.mainPackage = "com.playground";
-    }
+  public void setHOST(String HOST) {
+    this.HOST = HOST;
+  }
 
-    public String getHOST() {
-        return HOST;
-    }
+  public String getPROTOCOL() {
+    return PROTOCOL;
+  }
 
-    public String getPROTOCOL() {
-        return PROTOCOL;
-    }
+  public void setPROTOCOL(String PROTOCOL) {
+    this.PROTOCOL = PROTOCOL;
+  }
 
-    public MODE getMode() {
-        return mode;
-    }
+  public MODE getMode() {
+    return mode;
+  }
 
-    public String getPersistenceUnit() {
-        return persistenceUnit;
-    }
+  public void setMode(MODE mode) {
+    this.mode = mode;
+  }
 
-    public String getMainPackage() {
-        return mainPackage;
-    }
+  public String getPersistenceUnit() {
+    return persistenceUnit;
+  }
 
-    public void setHOST(String HOST) {
-        this.HOST = HOST;
-    }
+  public String getMainPackage() {
+    return mainPackage;
+  }
 
-    public void setPROTOCOL(String PROTOCOL) {
-        this.PROTOCOL = PROTOCOL;
-    }
+  public URI getBaseURI(int port) {
+    return URI.create(String.format("%s://%s:%d/", this.PROTOCOL, this.HOST, port));
+  }
 
-    public void setMode(MODE mode) {
-        this.mode = mode;
-    }
-
-    public URI getBaseURI(int port) {
-        return URI.create(String.format("%s://%s:%d/", this.PROTOCOL, this.HOST, port));
-    }
+  public enum MODE {
+    DEVELOPMENT,
+    PRODUCTION,
+    DEBUG
+  }
 }
