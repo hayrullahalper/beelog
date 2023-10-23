@@ -1,5 +1,6 @@
 package com.beehive.lib.Module;
 
+import com.beehive.errors.module.ModuleAnnotationNotFoundError;
 import com.beehive.lib.Controller.Controller;
 import com.beehive.lib.Service.Service;
 
@@ -10,7 +11,6 @@ public final class Module {
   private final Module parent;
   private final Module[] modules;
   private final List<Class<?>> services = new ArrayList<>();
-  private final List<Class<?>> controllers = new ArrayList<>();
 
   public Module(
     Module parent,
@@ -19,70 +19,76 @@ public final class Module {
     Class<?>[] controllers
   ) {
     this.parent = parent;
-
     this.modules = modules;
+
+    List.of(services).forEach(Service::check);
+    List.of(controllers).forEach(Controller::check);
+
     this.services.addAll(List.of(services));
-    this.controllers.addAll(List.of(controllers));
+  }
+
+  public static void check(Class<?> clazz) {
+    if (!clazz.isAnnotationPresent(com.beehive.annotations.Module.class)) {
+      throw new ModuleAnnotationNotFoundError(clazz.getName());
+    }
   }
 
   public static Module create(Class<?> clazz, Module parent) {
-    if (!clazz.isAnnotationPresent(com.beehive.annotations.Module.class)) {
-      throw new ModuleNotFoundError(clazz.getName());
-    }
+    Module.check(clazz);
 
-    Class<?>[] moduleClasses = clazz.getAnnotation(com.beehive.annotations.Module.class).modules();
+    var modules = getModulesFromModule(clazz);
+    var services = getServicesFromModule(clazz);
+    var controllers = getControllersFromModule(clazz);
 
-    Class<?>[] services = getServicesFromModule(clazz);
-    Class<?>[] controllers = getControllersFromModule(clazz);
+    var children = new Module[modules.length];
 
-    Module[] modules = new Module[moduleClasses.length];
+    var module = new Module(parent, children, services, controllers);
 
-    Module module = new Module(parent, modules, services, controllers);
-
-    for (int i = 0; i < moduleClasses.length; i++) {
-      modules[i] = create(moduleClasses[i], module);
-    }
+    List.of(modules).forEach(child -> {
+      int index = List.of(modules).indexOf(child);
+      children[index] = create(child, module);
+    });
 
     return module;
   }
 
+  private static Class<?>[] getModulesFromModule(Class<?> clazz) {
+    Class<?>[] modules = clazz.getAnnotation(com.beehive.annotations.Module.class).modules();
+    List.of(modules).forEach(Module::check);
+    return modules;
+  }
+
   private static Class<?>[] getServicesFromModule(Class<?> clazz) {
     Class<?>[] services = clazz.getAnnotation(com.beehive.annotations.Module.class).services();
-
-    for (Class<?> service : services) {
-      Service.check(service);
-    }
-
+    List.of(services).forEach(Service::check);
     return services;
   }
 
   private static Class<?>[] getControllersFromModule(Class<?> clazz) {
     Class<?>[] controllers = clazz.getAnnotation(com.beehive.annotations.Module.class).controllers();
-
-    for (Class<?> controller : controllers) {
-      Controller.check(controller);
-    }
-
+    List.of(controllers).forEach(Controller::check);
     return controllers;
   }
 
-  public List<Class<?>> getAllServiceClasses() {
-    List<Class<?>> allServices = new ArrayList<>();
+  public static List<Class<?>> getAllServices(Module module) {
+    List<Class<?>> services = new ArrayList<>();
 
-    for (Module module : modules) {
-      for (Class<?> service : module.getAllServiceClasses()) {
-        if (!allServices.contains(service)) {
-          allServices.add(service);
-        }
-      }
-    }
+    List.of(module.getModules()).forEach(child -> services.addAll(getAllServices(child)));
 
-    for (Class<?> service : services) {
-      if (!allServices.contains(service)) {
-        allServices.add(service);
-      }
-    }
+    services.addAll(module.getServices());
 
-    return allServices;
+    return services.stream().distinct().toList();
+  }
+
+  public Module getParent() {
+    return parent;
+  }
+
+  public Module[] getModules() {
+    return modules;
+  }
+
+  public List<Class<?>> getServices() {
+    return services;
   }
 }
