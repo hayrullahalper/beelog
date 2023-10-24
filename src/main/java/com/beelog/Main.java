@@ -1,16 +1,15 @@
 package com.beelog;
 
-import com.beehive.lib.Application.Application;
-import com.beehive.lib.Application.ApplicationConfig;
-import com.beehive.lib.Factory.Factory;
+import com.beehive.lib.application.BeehiveApplicationFactory;
+import com.beehive.lib.application.BeehiveConfig;
 import com.beelog.app.module.AppModule;
 
 public class Main {
 
   public static void main(String[] args) {
-    ApplicationConfig config = new ApplicationConfig("com.beelog", "beelog");
+    var config = BeehiveConfig.create("com.beelog", "beelog");
 
-    Application app = Factory.create(AppModule.class, config);
+    var app = BeehiveApplicationFactory.create(AppModule.class, config);
 
     app.listen(8080);
   }

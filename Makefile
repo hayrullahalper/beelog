@@ -5,7 +5,7 @@ dev:
 	mvn -q -e clean compile package exec:java
 
 check:
-	mvn -q checkstyle:checkstyle
+	mvn -q -e checkstyle:checkstyle
 
 up:
 	docker-compose up -d
