@@ -11,6 +11,7 @@ public final class Module {
   private final Module parent;
   private final Module[] modules;
   private final List<Class<?>> services = new ArrayList<>();
+  private final List<Class<?>> controllers = new ArrayList<>();
 
   public Module(
     Module parent,
@@ -25,6 +26,7 @@ public final class Module {
     List.of(controllers).forEach(Controller::check);
 
     this.services.addAll(List.of(services));
+    this.controllers.addAll(List.of(controllers));
   }
 
   public static void check(Class<?> clazz) {
@@ -53,31 +55,50 @@ public final class Module {
   }
 
   private static Class<?>[] getModulesFromModule(Class<?> clazz) {
-    Class<?>[] modules = clazz.getAnnotation(com.beehive.annotations.Module.class).modules();
-    List.of(modules).forEach(Module::check);
-    return modules;
+    return clazz.getAnnotation(com.beehive.annotations.Module.class).modules();
   }
 
   private static Class<?>[] getServicesFromModule(Class<?> clazz) {
-    Class<?>[] services = clazz.getAnnotation(com.beehive.annotations.Module.class).services();
-    List.of(services).forEach(Service::check);
-    return services;
+    return clazz.getAnnotation(com.beehive.annotations.Module.class).services();
   }
 
   private static Class<?>[] getControllersFromModule(Class<?> clazz) {
-    Class<?>[] controllers = clazz.getAnnotation(com.beehive.annotations.Module.class).controllers();
-    List.of(controllers).forEach(Controller::check);
-    return controllers;
+    return clazz.getAnnotation(com.beehive.annotations.Module.class).controllers();
   }
 
-  public static List<Class<?>> getAllServices(Module module) {
+  public static List<Class<?>> getServicesRecursive(Module module) {
     List<Class<?>> services = new ArrayList<>();
 
-    List.of(module.getModules()).forEach(child -> services.addAll(getAllServices(child)));
+    List.of(module.getModules()).forEach(child -> services.addAll(getServicesRecursive(child)));
 
     services.addAll(module.getServices());
 
     return services.stream().distinct().toList();
+  }
+
+  public static Module findByController(Class<?> clazz, Module module) {
+    if (module.getControllers().contains(clazz)) {
+      return module;
+    }
+
+    for (Module child : module.getModules()) {
+      var result = findByController(clazz, child);
+
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return null;
+  }
+
+  public static void lazyCheck(Module module) {
+    module.getServices().forEach(Service::fieldCheck);
+    module.getControllers().forEach(Controller::fieldCheck);
+
+    for (Module child : module.getModules()) {
+      lazyCheck(child);
+    }
   }
 
   public Module getParent() {
@@ -90,5 +111,9 @@ public final class Module {
 
   public List<Class<?>> getServices() {
     return services;
+  }
+
+  public List<Class<?>> getControllers() {
+    return controllers;
   }
 }
