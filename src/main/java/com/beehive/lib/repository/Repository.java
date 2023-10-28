@@ -1,4 +1,4 @@
-package com.beehive.lib.Repository;
+package com.beehive.lib.repository;
 
 import com.beehive.errors.repository.RepositoryInitializationError;
 import com.beehive.lib.application.BeehiveApplicationFactory;

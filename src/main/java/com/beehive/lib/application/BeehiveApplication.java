@@ -1,8 +1,8 @@
 package com.beehive.lib.application;
 
 import com.beehive.errors.application.BeehiveApplicationConfigurationError;
-import com.beehive.lib.Module.Module;
-import com.beehive.lib.Service.Service;
+import com.beehive.lib.module.Module;
+import com.beehive.lib.service.Service;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.apache.logging.log4j.LogManager;

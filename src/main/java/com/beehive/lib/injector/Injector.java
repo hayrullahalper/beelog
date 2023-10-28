@@ -1,8 +1,8 @@
-package com.beehive.lib.Injector;
+package com.beehive.lib.injector;
 
-import com.beehive.lib.Repository.Repository;
-import com.beehive.lib.Service.Service;
 import com.beehive.lib.application.BeehiveApplicationFactory;
+import com.beehive.lib.repository.Repository;
+import com.beehive.lib.service.Service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

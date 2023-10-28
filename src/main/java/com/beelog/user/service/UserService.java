@@ -1,7 +1,7 @@
 package com.beelog.user.service;
 
 import com.beehive.annotations.Injectable;
-import com.beehive.lib.Service.Service;
+import com.beehive.lib.service.Service;
 import com.beelog.user.entity.UserEntity;
 import com.beelog.user.repository.UserRepository;
 

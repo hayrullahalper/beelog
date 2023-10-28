@@ -1,8 +1,8 @@
-package com.beehive.lib.Module;
+package com.beehive.lib.module;
 
 import com.beehive.errors.module.ModuleAnnotationNotFoundError;
-import com.beehive.lib.Controller.Controller;
-import com.beehive.lib.Service.Service;
+import com.beehive.lib.controller.Controller;
+import com.beehive.lib.service.Service;
 
 import java.util.ArrayList;
 import java.util.List;

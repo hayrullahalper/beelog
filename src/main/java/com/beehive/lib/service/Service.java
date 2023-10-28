@@ -1,11 +1,11 @@
-package com.beehive.lib.Service;
+package com.beehive.lib.service;
 
 import com.beehive.annotations.Injectable;
 import com.beehive.errors.service.ServiceComplexityError;
 import com.beehive.errors.service.ServiceInheritanceError;
 import com.beehive.errors.service.ServiceInitializationError;
 import com.beehive.errors.service.ServiceInjectableAnnotationNotFoundError;
-import com.beehive.lib.Injector.Injector;
+import com.beehive.lib.injector.Injector;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

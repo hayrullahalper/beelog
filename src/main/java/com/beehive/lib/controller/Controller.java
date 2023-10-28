@@ -1,8 +1,8 @@
-package com.beehive.lib.Controller;
+package com.beehive.lib.controller;
 
 import com.beehive.errors.controller.ControllerInheritanceError;
 import com.beehive.errors.controller.ControllerPathAnnotationNotFoundError;
-import com.beehive.lib.Injector.Injector;
+import com.beehive.lib.injector.Injector;
 
 import javax.ws.rs.Path;
 
