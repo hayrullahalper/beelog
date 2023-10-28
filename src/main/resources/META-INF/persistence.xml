@@ -8,7 +8,7 @@
             <property name="hibernate.connection.username" value="user"/>
             <property name="hibernate.connection.password" value="secret"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.show_sql" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>
