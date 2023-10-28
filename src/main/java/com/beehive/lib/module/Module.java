@@ -12,13 +12,17 @@ public final class Module {
   private final Module[] modules;
   private final List<Class<?>> services = new ArrayList<>();
   private final List<Class<?>> controllers = new ArrayList<>();
+  private final Class<?> clazz;
 
   public Module(
+    Class<?> clazz,
+
     Module parent,
     Module[] modules,
     Class<?>[] services,
     Class<?>[] controllers
   ) {
+    this.clazz = clazz;
     this.parent = parent;
     this.modules = modules;
 
@@ -44,7 +48,7 @@ public final class Module {
 
     var children = new Module[modules.length];
 
-    var module = new Module(parent, children, services, controllers);
+    var module = new Module(clazz, parent, children, services, controllers);
 
     List.of(modules).forEach(child -> {
       int index = List.of(modules).indexOf(child);
@@ -76,13 +80,37 @@ public final class Module {
     return services.stream().distinct().toList();
   }
 
-  public static Module findByController(Class<?> clazz, Module module) {
-    if (module.getControllers().contains(clazz)) {
+  private static String extractPackageName(Class<?> clazz) {
+    return clazz.getPackageName().substring(0, clazz.getPackageName().lastIndexOf("."));
+  }
+
+  private static String extractPackageName(Module module) {
+    return module.getClazz().getPackageName().substring(0, module.getClazz().getPackageName().lastIndexOf("."));
+  }
+
+  public static Module findByService(Class<? extends Service> service, Module module) {
+    if (module.getServices().contains(service) && extractPackageName(service).equals(extractPackageName(module))) {
       return module;
     }
 
     for (Module child : module.getModules()) {
-      var result = findByController(clazz, child);
+      var result = findByService(service, child);
+
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return null;
+  }
+
+  public static Module findByController(Class<? extends Controller> controller, Module module) {
+    if (module.getControllers().contains(controller)) {
+      return module;
+    }
+
+    for (Module child : module.getModules()) {
+      var result = findByController(controller, child);
 
       if (result != null) {
         return result;
@@ -99,6 +127,10 @@ public final class Module {
     for (Module child : module.getModules()) {
       lazyCheck(child);
     }
+  }
+
+  public Class<?> getClazz() {
+    return clazz;
   }
 
   public Module getParent() {

@@ -42,26 +42,45 @@ public final class BeehiveServiceLoader {
       .orElse(null);
   }
 
-  public void checkService(Class<? extends Service> injector, Class<? extends Service> service) {
-  }
+  private void checkInjectable(Module m, Class<?> injector, Class<? extends Service> service) {
+    Module module = m;
 
-  public void checkController(Class<? extends Controller> injector, Class<? extends Service> service) {
-    Module module = Module.findByController(injector, this.module);
+    var permission = service.getAnnotation(Injectable.class).value();
+    boolean isPrivate = permission.equals(Injectable.Permission.PRIVATE);
+
+    if (isPrivate) {
+      Module serviceModule = Module.findByService(service, this.module);
+
+      if (!serviceModule.equals(module)) {
+        throw new BeehiveServiceLoaderInsufficientAccessError(injector, service);
+      }
+    }
+
 
     while (module != null) {
       if (module.getServices().contains(service)) {
         return;
       }
 
-      var permission = service.getAnnotation(Injectable.class).value();
-
-      if (permission.equals(Injectable.Permission.PRIVATE)) {
-        throw new BeehiveServiceLoaderInsufficientAccessError(injector.getName(), service.getName());
+      if (isPrivate) {
+        throw new BeehiveServiceLoaderInsufficientAccessError(injector, service);
       }
 
       module = module.getParent();
     }
 
-    throw new BeehiveServiceLoaderInsufficientAccessError(injector.getName(), service.getName());
+    throw new BeehiveServiceLoaderInsufficientAccessError(injector, service);
+  }
+
+  public void checkService(Class<? extends Service> injector, Class<? extends Service> service) {
+    Module module = Module.findByService(injector, this.module);
+
+    checkInjectable(module, injector, service);
+  }
+
+  public void checkController(Class<? extends Controller> injector, Class<? extends Service> service) {
+    Module module = Module.findByController(injector, this.module);
+
+    checkInjectable(module, injector, service);
   }
 }

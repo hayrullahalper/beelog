@@ -5,6 +5,7 @@ import com.beehive.errors.service.ServiceComplexityError;
 import com.beehive.errors.service.ServiceInheritanceError;
 import com.beehive.errors.service.ServiceInitializationError;
 import com.beehive.errors.service.ServiceInjectableAnnotationNotFoundError;
+import com.beehive.lib.application.BeehiveApplicationFactory;
 import com.beehive.lib.injector.Injector;
 
 import java.lang.reflect.Field;
@@ -23,6 +24,18 @@ public abstract class Service extends Injector {
     if (!Service.class.isAssignableFrom(clazz)) {
       throw new ServiceInheritanceError(clazz.getName());
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static void fieldCheck(Class<?> clazz) {
+    var service = (Class<? extends Service>) clazz;
+    var serviceLoader = BeehiveApplicationFactory.getInstance().getServiceLoader();
+
+    Stream.of(clazz.getDeclaredFields())
+      .map(Field::getType)
+      .filter(Service.class::isAssignableFrom)
+      .map(s -> (Class<? extends Service>) s)
+      .forEach(s -> serviceLoader.checkService(service, s));
   }
 
   public static List<Class<?>> sort(List<Class<?>> services) {
