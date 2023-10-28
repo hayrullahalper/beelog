@@ -8,10 +8,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Injectable {
+  Permission value() default Permission.PUBLIC;
+
   enum Permission {
     PUBLIC,
     PRIVATE
   }
-
-  Permission value() default Permission.PUBLIC;
 }
