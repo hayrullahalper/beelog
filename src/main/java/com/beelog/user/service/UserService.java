@@ -4,6 +4,7 @@ import com.beehive.annotations.Injectable;
 import com.beehive.lib.service.Service;
 import com.beelog.user.entity.UserEntity;
 import com.beelog.user.repository.UserRepository;
+import jakarta.persistence.NoResultException;
 
 @Injectable
 public class UserService extends Service {
@@ -20,7 +21,11 @@ public class UserService extends Service {
     userRepository.save(user);
   }
 
-  public UserEntity findByUsername(String username) {
-    return userRepository.findOne((cb, root) -> cb.equal(root.get("username"), username));
+  public UserEntity findByUsername(String username) throws UserNotFoundException {
+    try {
+      return userRepository.findOne((cb, root) -> cb.equal(root.get("username"), username));
+    } catch (NoResultException e) {
+      throw new UserNotFoundException("username", username);
+    }
   }
 }
