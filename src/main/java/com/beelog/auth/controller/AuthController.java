@@ -1,6 +1,6 @@
 package com.beelog.auth.controller;
 
-import com.beehive.lib.Controller.Controller;
+import com.beehive.lib.controller.Controller;
 import com.beelog.auth.service.AuthService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

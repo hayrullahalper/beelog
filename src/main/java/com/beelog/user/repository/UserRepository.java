@@ -1,6 +1,6 @@
 package com.beelog.user.repository;
 
-import com.beehive.lib.Repository.Repository;
+import com.beehive.lib.repository.Repository;
 import com.beelog.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;

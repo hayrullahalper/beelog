@@ -1,8 +1,7 @@
 package com.beehive.lib.application;
 
 import com.beehive.errors.application.BeehiveApplicationConfigurationError;
-import com.beehive.lib.Module.Module;
-import com.beehive.lib.Service.Service;
+import com.beehive.lib.module.Module;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.apache.logging.log4j.LogManager;
@@ -15,29 +14,28 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 public final class BeehiveApplication {
   private static final Logger logger = LogManager.getLogger();
 
-  private final List<Service> services = new ArrayList<>();
+  private final BeehiveServiceLoader serviceLoader;
   private final BeehiveConfig config;
-  private final Module module;
+
   private EntityManagerFactory emf;
   private Validator validator;
 
-  public BeehiveApplication(Class<?> clazz, BeehiveConfig config) {
+  BeehiveApplication(Class<?> clazz, BeehiveConfig config) {
     if (config.getMain().isEmpty() || config.getUnit().isEmpty()) {
       throw new BeehiveApplicationConfigurationError();
     }
 
     this.config = config;
-    this.module = Module.create(clazz, null);
 
     initHibernate();
     initValidator();
+
+    this.serviceLoader = new BeehiveServiceLoader(Module.create(clazz, null));
   }
 
   private void initValidator() {
@@ -48,17 +46,6 @@ public final class BeehiveApplication {
   private void initHibernate() {
     this.emf = Persistence.createEntityManagerFactory(config.getUnit());
     logger.info("Hibernate persistence unit [{}] loaded", config.getUnit());
-  }
-
-  private void initServices() {
-    Service.sort(Module.getAllServices(module)).forEach(service -> {
-      Service.check(service);
-
-      Service s = Service.create(service);
-
-      this.services.add(s);
-      logger.info("Service [{}] loaded", service.getName());
-    });
   }
 
   private void initHttpServer(int port) {
@@ -94,20 +81,17 @@ public final class BeehiveApplication {
   }
 
   public void listen(int port) {
-    initServices();
-    initHttpServer(port);
-  }
+    serviceLoader.load();
 
-  public Module getModule() {
-    return module;
+    initHttpServer(port);
   }
 
   public Validator getValidator() {
     return validator;
   }
 
-  public List<Service> getServices() {
-    return services;
+  public BeehiveServiceLoader getServiceLoader() {
+    return serviceLoader;
   }
 
   public EntityManagerFactory getEmf() {

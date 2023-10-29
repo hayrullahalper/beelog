@@ -2,8 +2,9 @@ package com.beelog.auth.service;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.beehive.annotations.Injectable;
-import com.beehive.lib.Service.Service;
+import com.beehive.lib.service.Service;
 import com.beelog.user.entity.UserEntity;
+import com.beelog.user.service.UserNotFoundException;
 import com.beelog.user.service.UserService;
 
 @Injectable
@@ -16,8 +17,12 @@ public class AuthService extends Service {
   }
 
   public boolean login(String username, String password) {
-    UserEntity user = userService.findByUsername(username);
-    return verifyPassword(password, user.getPasswordHash());
+    try {
+      UserEntity user = userService.findByUsername(username);
+      return verifyPassword(password, user.getPasswordHash());
+    } catch (UserNotFoundException e) {
+      return false;
+    }
   }
 
   private String hashPassword(String password) {
