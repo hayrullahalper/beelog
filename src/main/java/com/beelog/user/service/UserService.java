@@ -10,7 +10,16 @@ import jakarta.persistence.NoResultException;
 public class UserService extends Service {
   private final UserRepository userRepository = repository(UserRepository.class);
 
-  public void create(String name, String username, String email, String passwordHash) {
+  public void create(String name, String username, String email, String passwordHash)
+    throws UsernameAlreadyExistException, UserEmailAlreadyExistException {
+    if (findByEmail(email) != null) {
+      throw new UserEmailAlreadyExistException();
+    }
+
+    if (findByUsername(username) != null) {
+      throw new UsernameAlreadyExistException();
+    }
+
     UserEntity user = new UserEntity();
 
     user.setName(name);
@@ -21,11 +30,20 @@ public class UserService extends Service {
     userRepository.save(user);
   }
 
-  public UserEntity findByUsername(String username) throws UserNotFoundException {
+  public UserEntity findByUsername(String username) {
     try {
       return userRepository.findOne((cb, root) -> cb.equal(root.get("username"), username));
     } catch (NoResultException e) {
-      throw new UserNotFoundException("username", username);
+      return null;
     }
   }
+
+  public UserEntity findByEmail(String email) {
+    try {
+      return userRepository.findOne((cb, root) -> cb.equal(root.get("email"), email));
+    } catch (NoResultException e) {
+      return null;
+    }
+  }
+
 }
