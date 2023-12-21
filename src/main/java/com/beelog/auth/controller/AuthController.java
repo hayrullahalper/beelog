@@ -2,6 +2,12 @@ package com.beelog.auth.controller;
 
 import com.beehive.lib.controller.Controller;
 import com.beelog.auth.service.AuthService;
+import com.beelog.auth.service.UserNotFoundException;
+import com.beelog.user.entity.UserEntity;
+import com.beelog.user.repository.UserRepository;
+import com.beelog.user.service.UserEmailAlreadyExistException;
+import com.beelog.user.service.UserService;
+import com.beelog.user.service.UsernameAlreadyExistException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -17,6 +23,7 @@ import java.util.Set;
 public class AuthController extends Controller {
 
   private final AuthService authService = service(AuthService.class);
+  private final UserService userService = service(UserService.class);
 
   @POST
   @Path("/login")
@@ -39,21 +46,31 @@ public class AuthController extends Controller {
         .build();
     }
 
-    boolean success = authService.login(request.username, request.password);
+    try {
+      boolean isLogged = authService.login(request.username, request.password);
 
-    if (success) {
-      return Response
-        .status(Response.Status.OK)
-        .type(MediaType.APPLICATION_JSON)
-        .entity("Kralsın")
-        .build();
-    } else {
+      if (isLogged) {
+        return Response
+          .status(Response.Status.OK)
+          .type(MediaType.APPLICATION_JSON)
+          .entity("OK")
+          .build();
+      }
+
       return Response
         .status(Response.Status.UNAUTHORIZED)
         .type(MediaType.APPLICATION_JSON)
-        .entity("Ağla")
+        .entity("Invalid credentials")
+        .build();
+
+    } catch (UserNotFoundException e) {
+      return Response
+        .status(Response.Status.UNAUTHORIZED)
+        .type(MediaType.APPLICATION_JSON)
+        .entity("Invalid credentials")
         .build();
     }
+
   }
 
   @POST
@@ -77,12 +94,32 @@ public class AuthController extends Controller {
         .build();
     }
 
-    authService.register(request.name, request.username, request.email, request.password);
+    try {
+      UserEntity user = authService.register(request.name, request.username, request.email, request.password);
 
-    return Response
-      .status(Response.Status.OK)
-      .type(MediaType.APPLICATION_JSON)
-      .entity(request)
-      .build();
+      return Response
+        .status(Response.Status.OK)
+        .type(MediaType.APPLICATION_JSON)
+        .entity(user)
+        .build();
+
+    } catch (UserEmailAlreadyExistException e) {
+
+      return Response
+        .status(Response.Status.BAD_REQUEST)
+        .type(MediaType.APPLICATION_JSON)
+        .entity("User email already exist: " + request.email)
+        .build();
+
+    } catch (UsernameAlreadyExistException e) {
+
+      return Response
+        .status(Response.Status.BAD_REQUEST)
+        .type(MediaType.APPLICATION_JSON)
+        .entity("Username already exist: " + request.username)
+        .build();
+
+    }
+
   }
 }

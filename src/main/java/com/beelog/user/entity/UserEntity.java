@@ -80,4 +80,11 @@ public class UserEntity {
   public void setPasswordHash(String passwordHash) {
     this.passwordHash = passwordHash;
   }
+
+  @Override
+  public String toString() {
+    return "Id: " + this.id + " Username: " + this.username;
+  }
 }
+
+
