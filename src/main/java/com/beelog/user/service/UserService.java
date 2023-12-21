@@ -10,7 +10,7 @@ import jakarta.persistence.NoResultException;
 public class UserService extends Service {
   private final UserRepository userRepository = repository(UserRepository.class);
 
-  public void create(String name, String username, String email, String passwordHash)
+  public UserEntity create(String name, String username, String email, String passwordHash)
     throws UsernameAlreadyExistException, UserEmailAlreadyExistException {
     if (findByEmail(email) != null) {
       throw new UserEmailAlreadyExistException();
@@ -28,6 +28,8 @@ public class UserService extends Service {
     user.setPasswordHash(passwordHash);
 
     userRepository.save(user);
+
+    return user;
   }
 
   public UserEntity findByUsername(String username) {
