@@ -99,6 +99,11 @@
             <artifactId>log4j-core</artifactId>
             <version>3.0.0-alpha1</version>
         </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>4.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>
