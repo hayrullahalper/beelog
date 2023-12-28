@@ -2,11 +2,10 @@ package com.beelog.auth.controller;
 
 import com.beehive.lib.controller.Controller;
 import com.beelog.auth.service.AuthService;
+import com.beelog.auth.service.InvalidCredentialsException;
 import com.beelog.auth.service.UserNotFoundException;
 import com.beelog.user.entity.UserEntity;
-import com.beelog.user.repository.UserRepository;
 import com.beelog.user.service.UserEmailAlreadyExistException;
-import com.beelog.user.service.UserService;
 import com.beelog.user.service.UsernameAlreadyExistException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -23,7 +22,6 @@ import java.util.Set;
 public class AuthController extends Controller {
 
   private final AuthService authService = service(AuthService.class);
-  private final UserService userService = service(UserService.class);
 
   @POST
   @Path("/login")
@@ -47,30 +45,20 @@ public class AuthController extends Controller {
     }
 
     try {
-      boolean isLogged = authService.login(request.username, request.password);
-
-      if (isLogged) {
-        return Response
-          .status(Response.Status.OK)
-          .type(MediaType.APPLICATION_JSON)
-          .entity("OK")
-          .build();
-      }
+      String token = authService.login(request.username, request.password);
 
       return Response
-        .status(Response.Status.UNAUTHORIZED)
+        .status(Response.Status.OK)
         .type(MediaType.APPLICATION_JSON)
-        .entity("Invalid credentials")
+        .entity(token)
         .build();
-
-    } catch (UserNotFoundException e) {
+    } catch (UserNotFoundException | InvalidCredentialsException e) {
       return Response
         .status(Response.Status.UNAUTHORIZED)
         .type(MediaType.APPLICATION_JSON)
         .entity("Invalid credentials")
         .build();
     }
-
   }
 
   @POST
@@ -100,7 +88,7 @@ public class AuthController extends Controller {
       return Response
         .status(Response.Status.OK)
         .type(MediaType.APPLICATION_JSON)
-        .entity(user)
+        .entity(request)
         .build();
 
     } catch (UserEmailAlreadyExistException e) {
