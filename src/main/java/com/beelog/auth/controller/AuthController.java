@@ -50,13 +50,13 @@ public class AuthController extends Controller {
       return Response
         .status(Response.Status.OK)
         .type(MediaType.APPLICATION_JSON)
-        .entity(token)
+        .entity("{ \"token\": \"" + token + "\" }")
         .build();
     } catch (UserNotFoundException | InvalidCredentialsException e) {
       return Response
         .status(Response.Status.UNAUTHORIZED)
         .type(MediaType.APPLICATION_JSON)
-        .entity("Invalid credentials")
+        .entity("{ \"error\": \"" + e.getMessage() + "\" }")
         .build();
     }
   }
@@ -96,7 +96,7 @@ public class AuthController extends Controller {
       return Response
         .status(Response.Status.BAD_REQUEST)
         .type(MediaType.APPLICATION_JSON)
-        .entity("User email already exist: " + request.email)
+        .entity("{ \"username\": \"User email already exist: " + request.email + "\" }")
         .build();
 
     } catch (UsernameAlreadyExistException e) {
@@ -104,7 +104,7 @@ public class AuthController extends Controller {
       return Response
         .status(Response.Status.BAD_REQUEST)
         .type(MediaType.APPLICATION_JSON)
-        .entity("Username already exist: " + request.username)
+        .entity("{ \"username\": \"Username already exist: " + request.username + "\" }")
         .build();
 
     }

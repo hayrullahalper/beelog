@@ -13,8 +13,23 @@ import org.glassfish.jersey.server.ResourceConfig;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 import java.util.logging.Level;
+
+class CORSFilter implements ContainerResponseFilter {
+  public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+
+    MultivaluedMap<String, Object> headers = responseContext.getHeaders();
+
+    headers.add("Access-Control-Allow-Origin", "*");
+    headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+    headers.add("Access-Control-Allow-Headers", "Content-Type");
+  }
+}
 
 public final class BeehiveApplication {
   private static final Logger logger = LogManager.getLogger();
@@ -72,6 +87,9 @@ public final class BeehiveApplication {
     final ResourceConfig rc = new ResourceConfig().packages(config.getMain());
 
     rc.property("jersey.config.server.wadl.disableWadl", true);
+
+    rc.register(new CORSFilter());
+    rc.register(CORSFilter.class);
 
     java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.OFF);
     java.util.logging.Logger.getLogger("org.glassfish.grizzly").setLevel(Level.OFF);
